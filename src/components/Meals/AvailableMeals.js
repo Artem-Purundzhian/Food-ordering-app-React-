@@ -3,13 +3,17 @@ import Card from "../UI/Card";
 import classes from "./AvailableMeals.module.css";
 import MealItem from "./MealItem/MealItem";
 
-
 const AvailableMeals = () => {
   const [meals, setMeals] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
 
-  const fetchMeals = async () =>{
+  const fetchMeals = async () => {
+    setIsLoading(true);
     try {
-      const response = await fetch('https://foodordering-4ef92-default-rtdb.europe-west1.firebasedatabase.app/meals.json');
+      const response = await fetch(
+        "https://foodordering-4ef92-default-rtdb.europe-west1.firebasedatabase.app/meals.json"
+      );
       if (!response.ok) {
         console.log(response);
         throw new Error("Something went wrong!");
@@ -25,13 +29,15 @@ const AvailableMeals = () => {
         });
       }
       setMeals(loadedMeals);
+      setIsLoading(false);
     } catch (error) {
-      console.log('error');
+      setIsLoading(false);
+      setError(error.message);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchMeals()
+    fetchMeals();
   }, []);
 
   const mealsList = meals.map((meal) => (
@@ -44,10 +50,24 @@ const AvailableMeals = () => {
     />
   ));
 
+  if (error) {
+    return (
+      <section className={classes.meals}>
+        <Card>
+          <div className="errorMessage">{error}</div>
+        </Card>
+      </section>
+    );
+  }
+
   return (
     <section className={classes.meals}>
       <Card>
-        <ul>{mealsList}</ul>
+        {isLoading ? (
+          <div className="loadingSpinner"></div>
+        ) : (
+          <ul>{mealsList}</ul>
+        )}
       </Card>
     </section>
   );
