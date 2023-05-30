@@ -8,6 +8,8 @@ import Checkout from "./Checkout";
 
 const Cart = (props) => {
   const [isCheckout, setIsCheckout] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(false);
   const cartCtx = useContext(CartContext);
 
   const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
@@ -19,6 +21,35 @@ const Cart = (props) => {
 
   const cartItemAddHandler = (item) => {
     cartCtx.addItem({ ...item, amount: 1 });
+  };
+
+  const submitOrderHandler = async (userData) => {
+    const orderData = {
+      items: cartCtx.items,
+      user: userData,
+      total: totalAmount,
+    };
+    setIsLoading(true);
+    const response = await fetch(
+      "https://foodordering-4ef92-default-rtdb.europe-west1.firebasedatabase.app/orders.json",
+      {
+        method: "POST",
+        body: JSON.stringify(orderData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    ).catch((error) => {
+      console.log(error.message);
+    });
+    if (response.ok) {
+      setIsCheckout(false);
+      cartCtx.clearCart();
+      setSuccessMessage(true);
+    } else {
+      console.log(response);
+    }
+    setIsLoading(false);
   };
 
   const cartItems = (
@@ -53,15 +84,35 @@ const Cart = (props) => {
     </div>
   );
 
-  return (
-    <Modal onClose={props.onClose}>
+  const modalContent = (
+    <>
       {cartItems}
       <div className={classes.total}>
         <span>Total Amount</span>
         <span>{totalAmount}</span>
       </div>
-      {isCheckout && <Checkout onCancel={props.onClose} />}
+      {isCheckout && (
+        <Checkout onCancel={props.onClose} submitHandler={submitOrderHandler} />
+      )}
       {!isCheckout && modalActions}
+    </>
+  );
+
+  const loadingModalContent = (
+    <div className="spinnerWrapper">
+      <div className="loadingSpinner"></div>
+    </div>
+  );
+
+  const submittedModalContent = (
+    <h3 className="successMessage">Thank you for your order!</h3>
+  );
+
+  return (
+    <Modal onClose={props.onClose}>
+      {!isLoading && !successMessage && modalContent}
+      {isLoading && loadingModalContent}
+      {!isLoading && successMessage && submittedModalContent}
     </Modal>
   );
 };

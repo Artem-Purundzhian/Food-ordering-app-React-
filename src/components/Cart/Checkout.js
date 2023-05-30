@@ -1,12 +1,8 @@
-import { useContext } from "react";
 import useInput from "../../hooks/use-input";
 
 import classes from "./Checkout.module.css";
-import CartContext from "../../store/cart-context";
 
 const Checkout = (props) => {
-  const cartCtx = useContext(CartContext);
-
   const {
     value: enteredName,
     isValid: enteredNameisValid,
@@ -51,23 +47,32 @@ const Checkout = (props) => {
       enteredPostalisValid &&
       enteredCityisValid
     ) {
-      console.log(enteredName);
-      console.log(enteredStreet);
-      console.log(enteredPostal);
-      console.log(enteredCity);
-      console.log(cartCtx.items);
-      console.log(cartCtx.totalAmount);
+      props.submitHandler({
+        name: enteredName,
+        street: enteredStreet,
+        postal: enteredPostal,
+        city: enteredCity,
+      });
 
       resetNameInput();
       resetStreetInput();
       resetPostalInput();
       resetCityInput();
+    }else{
+        nameBlurHandler();
+        streetBlurHandler();
+        postalBlurHandler();
+        cityBlurHandler();
     }
   };
 
   return (
     <form className={classes.form} onSubmit={confirmHandler}>
-      <div className={classes.control}>
+      <div
+        className={` ${classes.control} ${
+          nameInputHasError && classes.invalid
+        }`}
+      >
         <label htmlFor="name">Your Name</label>
         <input
           type="text"
@@ -80,7 +85,11 @@ const Checkout = (props) => {
           <p className="error-text">Name must not be empty</p>
         )}
       </div>
-      <div className={classes.control}>
+      <div
+        className={` ${classes.control} ${
+          streetInputHasError && classes.invalid
+        }`}
+      >
         <label htmlFor="street">Street</label>
         <input
           type="text"
@@ -93,7 +102,11 @@ const Checkout = (props) => {
           <p className="error-text">Street must not be empty</p>
         )}
       </div>
-      <div className={classes.control}>
+      <div
+        className={` ${classes.control} ${
+          postalInputHasError && classes.invalid
+        }`}
+      >
         <label htmlFor="postal">Postal Code</label>
         <input
           type="text"
@@ -106,9 +119,19 @@ const Checkout = (props) => {
           <p className="error-text">Postal Code must not be empty</p>
         )}
       </div>
-      <div className={classes.control}>
+      <div
+        className={` ${classes.control} ${
+          cityInputHasError && classes.invalid
+        }`}
+      >
         <label htmlFor="city">City</label>
-        <input type="text" id="city" value={enteredCity} onChange={cityChangedHandler} onBlur={cityBlurHandler} />
+        <input
+          type="text"
+          id="city"
+          value={enteredCity}
+          onChange={cityChangedHandler}
+          onBlur={cityBlurHandler}
+        />
         {cityInputHasError && (
           <p className="error-text">City must not be empty</p>
         )}

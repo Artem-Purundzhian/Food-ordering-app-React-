@@ -50,3 +50,15 @@ body {
   left: 0;
   bottom: -8px;
 }
+
+.spinnerWrapper{
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  position: relative;
+}
+
+.successMessage{
+  color: green;
+  text-align: center;
+}
