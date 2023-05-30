@@ -41,3 +41,12 @@ body {
   color: red;
   text-align: center;
 }
+
+.error-text{
+  color: red;
+  font-size: 11px;
+  margin: 0;
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+}
