@@ -3,9 +3,20 @@ import Cart from "./components/Cart/Cart";
 import Header from "./components/Layout/Header";
 import Meals from "./components/Meals/Meals";
 import CartProvider from "./store/CartProvider";
+import Orders from "./components/Orders/Orders";
 
 function App() {
   const [cartIsShown, setCartIsShown] = useState(false);
+  const [ordersShown, setordersShown] = useState(false);
+
+
+  const showOrders = () => {
+    setordersShown(true);
+  }
+
+  const hideOrders = () => {
+    setordersShown(false);
+  }
 
   const showCartHandler = () => {
     setCartIsShown(true);
@@ -18,7 +29,8 @@ function App() {
   return (
     <CartProvider>
       { cartIsShown && <Cart onClose={hideCartHandler} />}
-      <Header onShowCart={showCartHandler} />
+      { ordersShown && <Orders onClose={hideOrders} />}
+      <Header onShowCart={showCartHandler} onShowOrders={showOrders} />
       <main>
         <Meals/>
       </main>

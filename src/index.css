@@ -62,3 +62,13 @@ body {
   color: green;
   text-align: center;
 }
+
+.flex{
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.flex h2{
+  margin: 0 !important;
+}
